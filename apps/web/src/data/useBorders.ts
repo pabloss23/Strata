@@ -12,7 +12,7 @@ export interface BorderFeature {
 }
 
 async function loadBorders(): Promise<BorderFeature[]> {
-  const res = await fetch("/geo/countries-110m.json");
+  const res = await fetch(`${import.meta.env.BASE_URL}geo/countries-110m.json`);
   if (!res.ok) throw new Error("No se pudieron cargar las fronteras");
   const topo: any = await res.json();
   const fc: any = feature(topo, topo.objects.countries);

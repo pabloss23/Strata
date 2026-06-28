@@ -4,7 +4,9 @@ import type { Dataset } from "@/types/country";
 
 async function loadDataset(): Promise<Dataset> {
   // Intenta el dataset real; si no existe, usa el de muestra.
-  const candidates = ["/data/countries.json", "/data/countries.sample.json"];
+  // Base-aware: funciona en raíz (/) y en subruta (p. ej. GitHub Pages /strata/).
+  const base = import.meta.env.BASE_URL;
+  const candidates = [`${base}data/countries.json`, `${base}data/countries.sample.json`];
   for (const url of candidates) {
     try {
       const res = await fetch(url);

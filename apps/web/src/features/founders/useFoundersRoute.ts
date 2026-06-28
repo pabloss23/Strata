@@ -1,16 +1,30 @@
 // Router mínimo y aislado para Strata Founders (ruta /founders). History API,
-// sin dependencias. La app principal renderiza <FoundersApp/> cuando esto es true.
+// sin dependencias. Base-aware: funciona en raíz (/) y en subruta (GitHub Pages
+// /strata/) leyendo import.meta.env.BASE_URL.
 import { useEffect, useState } from "react";
 
 export const FOUNDERS_PATH = "/founders";
 
-export function isFoundersPath(p: string = window.location.pathname): boolean {
-  return p === FOUNDERS_PATH || p.startsWith(FOUNDERS_PATH + "/");
+const BASE = (import.meta.env.BASE_URL || "/").replace(/\/+$/, ""); // "" o "/strata"
+
+/** Quita el prefijo de base para comparar rutas lógicas. */
+function rel(p: string): string {
+  let r = p;
+  if (BASE && r.startsWith(BASE)) r = r.slice(BASE.length);
+  if (!r.startsWith("/")) r = "/" + r;
+  return r;
 }
 
+export function isFoundersPath(p: string = window.location.pathname): boolean {
+  const r = rel(p);
+  return r === FOUNDERS_PATH || r.startsWith(FOUNDERS_PATH + "/");
+}
+
+/** Navega a una ruta lógica (sin base); añade la base y notifica a los escuchas. */
 export function navigate(path: string) {
-  if (window.location.pathname === path) return;
-  window.history.pushState({}, "", path);
+  const full = (BASE + path).replace(/\/{2,}/g, "/") || "/";
+  if (window.location.pathname === full) return;
+  window.history.pushState({}, "", full);
   window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
