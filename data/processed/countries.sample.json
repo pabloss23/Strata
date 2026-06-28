@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-01-15",
+  "_note": "DATOS DE MUESTRA ILUSTRATIVOS — valores aproximados solo para desarrollar la UI. Reemplazar por la salida real de data/pipeline/build_dataset.py (cada cifra con su fuente y anio reales).",
+  "metricCatalog": [
+    { "id": "gdp_per_capita", "label": "PIB per capita", "dimension": "economic", "direction": "higher_is_better", "unit": "USD", "source": "World Bank" },
+    { "id": "gdp_growth", "label": "Crecimiento del PIB", "dimension": "economic", "direction": "higher_is_better", "unit": "%", "source": "World Bank" },
+    { "id": "inflation", "label": "Inflacion", "dimension": "economic", "direction": "lower_is_better", "unit": "%", "source": "World Bank" },
+    { "id": "unemployment", "label": "Desempleo", "dimension": "economic", "direction": "lower_is_better", "unit": "%", "source": "World Bank" },
+    { "id": "gini", "label": "Desigualdad (Gini)", "dimension": "economic", "direction": "lower_is_better", "unit": "indice", "source": "World Bank" },
+    { "id": "democracy_index", "label": "Indice de democracia", "dimension": "political", "direction": "higher_is_better", "unit": "0-10", "source": "EIU" },
+    { "id": "corruption", "label": "Percepcion de corrupcion (CPI)", "dimension": "political", "direction": "higher_is_better", "unit": "0-100", "source": "Transparency Intl" },
+    { "id": "press_freedom", "label": "Libertad de prensa", "dimension": "political", "direction": "higher_is_better", "unit": "0-100", "source": "RSF" },
+    { "id": "rule_of_law", "label": "Estado de derecho", "dimension": "political", "direction": "higher_is_better", "unit": "indice", "source": "World Bank WGI" },
+    { "id": "hdi", "label": "Desarrollo humano (IDH)", "dimension": "social", "direction": "higher_is_better", "unit": "0-1", "source": "UNDP" },
+    { "id": "life_expectancy", "label": "Esperanza de vida", "dimension": "social", "direction": "higher_is_better", "unit": "anios", "source": "WHO/World Bank" },
+    { "id": "happiness", "label": "Felicidad", "dimension": "social", "direction": "higher_is_better", "unit": "0-10", "source": "World Happiness Report" },
+    { "id": "internet_users", "label": "Uso de internet", "dimension": "social", "direction": "higher_is_better", "unit": "% poblacion", "source": "World Bank" }
+  ],
+  "countries": [
+    {
+      "iso3": "ESP", "iso2": "ES", "name": "España", "region": "Europe", "subregion": "Southern Europe",
+      "capital": "Madrid", "flag": "https://flagcdn.com/es.svg", "population": 48000000, "area_km2": 505990, "latlng": [40.0, -4.0],
+      "metrics": {
+        "gdp_per_capita": { "value": 33000, "year": 2024, "source": "World Bank" },
+        "gdp_growth": { "value": 2.5, "year": 2024, "source": "World Bank" },
+        "inflation": { "value": 3.1, "year": 2024, "source": "World Bank" },
+        "unemployment": { "value": 11.5, "year": 2024, "source": "World Bank" },
+        "gini": { "value": 33.0, "year": 2022, "source": "World Bank" },
+        "democracy_index": { "value": 8.0, "year": 2024, "source": "EIU" },
+        "corruption": { "value": 60, "year": 2024, "source": "Transparency Intl" },
+        "press_freedom": { "value": 78, "year": 2024, "source": "RSF" },
+        "rule_of_law": { "value": 0.9, "year": 2023, "source": "World Bank WGI" },
+        "hdi": { "value": 0.905, "year": 2023, "source": "UNDP" },
+        "life_expectancy": { "value": 83.2, "year": 2022, "source": "WHO" },
+        "happiness": { "value": 6.4, "year": 2024, "source": "World Happiness Report" },
+        "internet_users": { "value": 94, "year": 2023, "source": "World Bank" }
+      }
+    },
+    {
+      "iso3": "JPN", "iso2": "JP", "name": "Japón", "region": "Asia", "subregion": "Eastern Asia",
+      "capital": "Tokio", "flag": "https://flagcdn.com/jp.svg", "population": 124000000, "area_km2": 377975, "latlng": [36.0, 138.0],
+      "metrics": {
+        "gdp_per_capita": { "value": 34000, "year": 2024, "source": "World Bank" },
+        "gdp_growth": { "value": 1.0, "year": 2024, "source": "World Bank" },
+        "inflation": { "value": 2.8, "year": 2024, "source": "World Bank" },
+        "unemployment": { "value": 2.6, "year": 2024, "source": "World Bank" },
+        "gini": { "value": 32.9, "year": 2021, "source": "World Bank" },
+        "democracy_index": { "value": 8.4, "year": 2024, "source": "EIU" },
+        "corruption": { "value": 73, "year": 2024, "source": "Transparency Intl" },
+        "press_freedom": { "value": 69, "year": 2024, "source": "RSF" },
+        "rule_of_law": { "value": 1.5, "year": 2023, "source": "World Bank WGI" },
+        "hdi": { "value": 0.920, "year": 2023, "source": "UNDP" },
+        "life_expectancy": { "value": 84.5, "year": 2022, "source": "WHO" },
+        "happiness": { "value": 6.0, "year": 2024, "source": "World Happiness Report" },
+        "internet_users": { "value": 83, "year": 2023, "source": "World Bank" }
+      }
+    },
+    {
+      "iso3": "USA", "iso2": "US", "name": "Estados Unidos", "region": "Americas", "subregion": "North America",
+      "capital": "Washington D.C.", "flag": "https://flagcdn.com/us.svg", "population": 335000000, "area_km2": 9833517, "latlng": [38.0, -97.0],
+      "metrics": {
+        "gdp_per_capita": { "value": 82000, "year": 2024, "source": "World Bank" },
+        "gdp_growth": { "value": 2.8, "year": 2024, "source": "World Bank" },
+        "inflation": { "value": 3.0, "year": 2024, "source": "World Bank" },
+        "unemployment": { "value": 4.1, "year": 2024, "source": "World Bank" },
+        "gini": { "value": 39.7, "year": 2022, "source": "World Bank" },
+        "democracy_index": { "value": 7.85, "year": 2024, "source": "EIU" },
+        "corruption": { "value": 69, "year": 2024, "source": "Transparency Intl" },
+        "press_freedom": { "value": 72, "year": 2024, "source": "RSF" },
+        "rule_of_law": { "value": 1.4, "year": 2023, "source": "World Bank WGI" },
+        "hdi": { "value": 0.927, "year": 2023, "source": "UNDP" },
+        "life_expectancy": { "value": 77.5, "year": 2022, "source": "WHO" },
+        "happiness": { "value": 6.7, "year": 2024, "source": "World Happiness Report" },
+        "internet_users": { "value": 92, "year": 2023, "source": "World Bank" }
+      }
+    },
+    {
+      "iso3": "BRA", "iso2": "BR", "name": "Brasil", "region": "Americas", "subregion": "South America",
+      "capital": "Brasilia", "flag": "https://flagcdn.com/br.svg", "population": 216000000, "area_km2": 8515767, "latlng": [-10.0, -55.0],
+      "metrics": {
+        "gdp_per_capita": { "value": 10000, "year": 2024, "source": "World Bank" },
+        "gdp_growth": { "value": 2.9, "year": 2024, "source": "World Bank" },
+        "inflation": { "value": 4.4, "year": 2024, "source": "World Bank" },
+        "unemployment": { "value": 7.8, "year": 2024, "source": "World Bank" },
+        "gini": { "value": 52.0, "year": 2022, "source": "World Bank" },
+        "democracy_index": { "value": 6.8, "year": 2024, "source": "EIU" },
+        "corruption": { "value": 36, "year": 2024, "source": "Transparency Intl" },
+        "press_freedom": { "value": 62, "year": 2024, "source": "RSF" },
+        "rule_of_law": { "value": 0.0, "year": 2023, "source": "World Bank WGI" },
+        "hdi": { "value": 0.760, "year": 2023, "source": "UNDP" },
+        "life_expectancy": { "value": 75.5, "year": 2022, "source": "WHO" },
+        "happiness": { "value": 6.3, "year": 2024, "source": "World Happiness Report" },
+        "internet_users": { "value": 84, "year": 2023, "source": "World Bank" }
+      }
+    },
+    {
+      "iso3": "NOR", "iso2": "NO", "name": "Noruega", "region": "Europe", "subregion": "Northern Europe",
+      "capital": "Oslo", "flag": "https://flagcdn.com/no.svg", "population": 5500000, "area_km2": 385207, "latlng": [62.0, 10.0],
+      "metrics": {
+        "gdp_per_capita": { "value": 87000, "year": 2024, "source": "World Bank" },
+        "gdp_growth": { "value": 1.2, "year": 2024, "source": "World Bank" },
+        "inflation": { "value": 3.4, "year": 2024, "source": "World Bank" },
+        "unemployment": { "value": 3.6, "year": 2024, "source": "World Bank" },
+        "gini": { "value": 27.7, "year": 2022, "source": "World Bank" },
+        "democracy_index": { "value": 9.8, "year": 2024, "source": "EIU" },
+        "corruption": { "value": 84, "year": 2024, "source": "Transparency Intl" },
+        "press_freedom": { "value": 92, "year": 2024, "source": "RSF" },
+        "rule_of_law": { "value": 2.0, "year": 2023, "source": "World Bank WGI" },
+        "hdi": { "value": 0.966, "year": 2023, "source": "UNDP" },
+        "life_expectancy": { "value": 83.3, "year": 2022, "source": "WHO" },
+        "happiness": { "value": 7.3, "year": 2024, "source": "World Happiness Report" },
+        "internet_users": { "value": 99, "year": 2023, "source": "World Bank" }
+      }
+    }
+  ]
+}

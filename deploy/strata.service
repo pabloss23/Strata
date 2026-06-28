@@ -1,0 +1,37 @@
+# systemd — Strata siempre encendido (servidor Linux / VPS).
+# Sirve la SPA ya construida con `vite preview`. Reinicio automático ante caídas
+# y arranque al boot. 100% gratuito.
+#
+# Instalación (en un servidor Linux):
+#   1) Copia el repo a /opt/strata  (o ajusta WorkingDirectory abajo).
+#   2) sudo useradd -r -s /usr/sbin/nologin strata   # usuario sin login (opcional)
+#   3) sudo cp deploy/strata.service /etc/systemd/system/strata.service
+#   4) sudo systemctl daemon-reload
+#   5) sudo systemctl enable --now strata
+#   6) sudo systemctl status strata     # ver estado
+#      journalctl -u strata -f          # ver logs en vivo
+#
+# Para que NUNCA se apague: Restart=always + WantedBy=multi-user.target (arranca al boot).
+
+[Unit]
+Description=Strata — globo de datos + Founders (SPA servida con Vite preview)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Ajusta esta ruta a donde clones el repo:
+WorkingDirectory=/opt/strata/apps/web
+# Construye una vez antes de servir (idempotente). Quita estas líneas si haces el build en CI.
+ExecStartPre=/usr/bin/npm ci
+ExecStartPre=/usr/bin/npm run build
+ExecStart=/usr/bin/npm run preview -- --port 4173 --host 0.0.0.0
+Restart=always
+RestartSec=3
+# Reinicia siempre, pase lo que pase:
+StartLimitIntervalSec=0
+User=strata
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

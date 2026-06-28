@@ -1,0 +1,262 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Sistema de tema (Parte A). Los tokens se definen como TRIPLETES RGB ("r g b")
+  para que Tailwind pueda inyectar opacidad: rgb(var(--token) / <alpha-value>).
+  La identidad navy + oro se conserva; en claro el oro se oscurece a #C8901E para
+  cumplir contraste AA en texto, manteniendo #E5B85B para rellenos (--accent-fill).
+  El globo es SIEMPRE una esfera oscura (se pinta con constantes fijas en JS).
+*/
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: 6 10 22; /* #060A16 */
+  --surface: 12 19 34; /* #0C1322 */
+  --surface-2: 19 28 46; /* #131C2E (elevada) */
+  --surface-3: 24 34 54; /* hover/elevada+ */
+  --sunken: 10 16 29; /* #0A101D */
+  --border: 32 41 59; /* #20293B */
+  --border-strong: 44 56 80; /* #2C3850 */
+  --text-1: 244 247 251; /* #F4F7FB */
+  --text-2b: 203 213 225; /* #CBD5E1 */
+  --text-2: 154 167 184; /* #9AA7B8 */
+  --text-3: 100 116 139; /* #64748B */
+  --accent: 229 184 91; /* #E5B85B */
+  --accent-hi: 240 198 116; /* #F0C674 */
+  --accent-dim: 138 110 52; /* #8A6E34 */
+  --accent-fill: 229 184 91; /* relleno botón primario en ambos temas */
+  --success: 52 211 153;
+  --warning: 251 191 36;
+  --danger: 248 113 113;
+  --info: 96 165 250;
+  --glass-bg: 12 19 34;
+  --glass-alpha: 0.72;
+  --glass-border: 255 255 255;
+  --glass-border-alpha: 0.06;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --glow-alpha: 0.07;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: 244 246 249; /* #F4F6F9 */
+  --surface: 255 255 255;
+  --surface-2: 255 255 255;
+  --surface-3: 238 241 245;
+  --sunken: 238 241 245; /* #EEF1F5 */
+  --border: 221 227 236; /* #DDE3EC */
+  --border-strong: 199 208 221; /* #C7D0DD */
+  --text-1: 13 19 38; /* #0D1326 */
+  --text-2b: 51 96 122;
+  --text-2: 81 96 122; /* #51607A */
+  --text-3: 138 151 171; /* #8A97AB */
+  --accent: 200 144 30; /* #C8901E (AA en texto) */
+  --accent-hi: 176 125 23; /* #B07D17 */
+  --accent-dim: 180 128 26;
+  --accent-fill: 229 184 91; /* el relleno sigue siendo oro brillante */
+  --success: 14 159 110;
+  --warning: 194 132 10;
+  --danger: 220 38 38;
+  --info: 37 99 235;
+  --glass-bg: 255 255 255;
+  --glass-alpha: 0.72;
+  --glass-border: 13 19 38;
+  --glass-border-alpha: 0.08;
+  --shadow: 0 1px 2px rgba(13, 19, 38, 0.06), 0 8px 24px rgba(13, 19, 38, 0.08);
+  --glow-alpha: 0.05;
+}
+
+:root {
+  /* Alias de color (hex) para estilos en línea y constantes; derivados del acento. */
+  --gold: rgb(var(--accent));
+  --gold-hi: rgb(var(--accent-hi));
+  /* Movimiento */
+  --motion-fast: 120ms;
+  --motion: 180ms;
+  --motion-slow: 260ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: rgb(var(--bg));
+  color: rgb(var(--text-1));
+  font-family: Geist, Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+  transition: background-color var(--motion-slow) var(--ease-out), color var(--motion-slow) var(--ease-out);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: rgb(var(--accent) / 0.3);
+  color: rgb(var(--text-1));
+}
+
+/* Fondo: resplandor dorado tras el globo + viñeta. Funciona en claro y oscuro. */
+.app-bg {
+  background:
+    radial-gradient(900px 900px at 62% 46%, rgb(var(--accent) / var(--glow-alpha)), transparent 60%),
+    radial-gradient(1200px 800px at 50% 120%, rgb(var(--surface) / 0.9), transparent 70%),
+    rgb(var(--bg));
+  transition: background-color var(--motion-slow) var(--ease-out);
+}
+.app-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 100% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.45));
+}
+[data-theme="light"] .app-bg::after {
+  background: radial-gradient(120% 100% at 50% 50%, transparent 60%, rgb(13 19 38 / 0.06));
+}
+
+@layer components {
+  /* Superficie de cristal premium, temática. */
+  .glass {
+    background: rgb(var(--glass-bg) / var(--glass-alpha));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgb(var(--glass-border) / var(--glass-border-alpha));
+    box-shadow: var(--shadow);
+    transition: background-color var(--motion-slow) var(--ease-out), border-color var(--motion-slow) var(--ease-out);
+  }
+  /* Etiqueta de sección. */
+  .label {
+    @apply text-2xs font-semibold uppercase text-ink-500;
+    letter-spacing: 0.1em;
+  }
+  /* Item de navegación de la barra lateral. */
+  .nav-item {
+    @apply flex items-center gap-2.5 rounded-btn px-3 py-2 text-[15px] font-medium text-ink-300
+      transition-all duration-200 ease-smooth hover:bg-black/[0.04] hover:text-ink-100;
+  }
+  [data-theme="dark"] .nav-item {
+    @apply hover:bg-white/[0.04];
+  }
+  .nav-item-active {
+    @apply bg-black/[0.05] text-ink-100;
+  }
+  [data-theme="dark"] .nav-item-active {
+    @apply bg-white/[0.05];
+  }
+  /* Botón primario: relleno oro brillante + texto navy en AMBOS temas (AA). */
+  .btn-primary {
+    background: rgb(var(--accent-fill));
+    color: #0d1326;
+    @apply rounded-btn font-semibold transition-colors;
+  }
+  .btn-primary:hover {
+    background: rgb(var(--accent-hi));
+  }
+}
+
+/* Cursor / interacción. */
+button:not(:disabled),
+[role="option"],
+[role="button"],
+select {
+  cursor: pointer;
+}
+button {
+  touch-action: manipulation;
+}
+
+/* Foco de teclado visible: anillo dorado. */
+*:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+canvas:focus {
+  outline: none;
+}
+
+/* Scrollbars discretas, temáticas. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--border)) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgb(var(--border));
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--border-strong));
+  background-clip: padding-box;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.panel-in {
+  animation: panel-in 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rise-in {
+  animation: rise-in 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+select option,
+select optgroup {
+  background: rgb(var(--surface));
+  color: rgb(var(--text-1));
+}
+select optgroup {
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* "Reducir animaciones" desde el panel de accesibilidad. */
+.reduce-anim *,
+.reduce-anim *::before,
+.reduce-anim *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.env.local
+data/raw/
+*.log
+.DS_Store
+.vercel
+.netlify
+__pycache__/
+*.pyc
+
+# Config local de Claude Code (no publicar)
+.claude/

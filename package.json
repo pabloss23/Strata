@@ -1,0 +1,12 @@
+{
+  "name": "strata",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Atlas comparativo del mundo (economico, politico, social) sobre globo 3D satelite",
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "npm --workspace apps/web run dev",
+    "build": "npm --workspace apps/web run build",
+    "data": "python data/pipeline/build_dataset.py"
+  }
+}

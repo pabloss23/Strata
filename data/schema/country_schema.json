@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Strata country dataset",
+  "description": "Contrato de datos. El pipeline DEBE producir JSON que valide aqui. El frontend depende de esta forma.",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "countries"],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "generatedAt": { "type": "string", "description": "ISO date de generacion" },
+    "metricCatalog": {
+      "type": "array",
+      "description": "Definicion de cada metrica (espejo de docs/METRICS.md)",
+      "items": {
+        "type": "object",
+        "required": ["id", "dimension", "direction", "unit", "source"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "dimension": { "enum": ["economic", "political", "social"] },
+          "direction": { "enum": ["higher_is_better", "lower_is_better", "neutral"] },
+          "unit": { "type": "string" },
+          "source": { "type": "string" }
+        }
+      }
+    },
+    "countries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["iso3", "name", "metrics"],
+        "properties": {
+          "iso3": { "type": "string", "pattern": "^[A-Z]{3}$" },
+          "iso2": { "type": "string" },
+          "name": { "type": "string" },
+          "region": { "type": "string" },
+          "subregion": { "type": "string" },
+          "capital": { "type": "string" },
+          "flag": { "type": "string" },
+          "population": { "type": ["number", "null"] },
+          "area_km2": { "type": ["number", "null"] },
+          "latlng": {
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "metrics": {
+            "type": "object",
+            "description": "Clave = metric id. Valor con el dato crudo, su anio y su fuente.",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["value", "year"],
+              "properties": {
+                "value": { "type": ["number", "null"] },
+                "year": { "type": ["integer", "null"] },
+                "source": { "type": "string" },
+                "estimated": { "type": "boolean" }
+              }
+            }
+          },
+          "series": {
+            "type": "object",
+            "description": "Opcional (para Time Machine). Clave = metric id; valor = {anio: valor}",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": { "type": ["number", "null"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}
