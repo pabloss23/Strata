@@ -216,11 +216,14 @@ export default function GlobeView() {
           pointLat={(d: any) => d.lat}
           pointLng={(d: any) => d.lng}
           pointColor={(d: any) => (pointActive(d.iso3) ? (isLight ? "#B67A12" : GOLD) : capColor(scoreOf(d.iso3), scale, nodataColor))}
-          pointAltitude={(d: any) => (pointActive(d.iso3) ? 0.06 : 0.018)}
-          pointRadius={(d: any) => (pointActive(d.iso3) ? 0.65 : 0.4)}
-          pointResolution={6}
+          // Micro-Estados/islas: discos PLANOS a ras de superficie (no torres 3D).
+          // Solo se elevan un poco al seleccionar/hover, como feedback. Resolución
+          // alta = círculos suaves en vez de prismas hexagonales.
+          pointAltitude={(d: any) => (pointActive(d.iso3) ? 0.035 : 0.004)}
+          pointRadius={(d: any) => (pointActive(d.iso3) ? 0.5 : 0.28)}
+          pointResolution={14}
           pointLabel={(d: any) => labelHtml(d.iso3)}
-          pointsTransitionDuration={0}
+          pointsTransitionDuration={reduce ? 0 : 220}
           onPointClick={(d: any) => onPick(d.iso3)}
           onPointHover={(d: any) => setHovered(d ? d.iso3 : null)}
         />
