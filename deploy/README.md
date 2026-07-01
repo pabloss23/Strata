@@ -2,6 +2,21 @@
 
 Todo gratuito. Dos cosas: subir a GitHub y mantener el servidor encendido.
 
+## 0) Publicar/actualizar con 1 comando
+
+```powershell
+npm run deploy          # build + commit + push -> GitHub Actions despliega solo
+```
+
+La web queda en **https://pabloss23.github.io/Strata/** (la **S es MAYÚSCULA**: el
+repo se llama `Strata` y las URLs de Pages distinguen mayúsculas; `/strata/` da 404).
+
+> ⚠️ AJUSTE OBLIGATORIO (una sola vez, en la web de GitHub):
+> **Settings → Pages → Build and deployment → Source: "GitHub Actions"**.
+> Si está en "Deploy from a branch", GitHub sirve el README/documentación como
+> página Jekyll (no la app) y parece que "no carga". Tras cambiarlo, vuelve a
+> ejecutar `npm run deploy` (o re-lanza el workflow) y aparecerá el globo.
+
 ## 1) Subir a GitHub
 
 El repo ya está inicializado y con el primer commit en la rama `main`.

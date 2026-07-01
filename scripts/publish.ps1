@@ -41,4 +41,8 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host ""
 Write-Host "LISTO. GitHub Actions desplegara en 1-2 min:" -ForegroundColor Green
-Write-Host "  https://pabloss23.github.io/strata/" -ForegroundColor Green
+Write-Host "  https://pabloss23.github.io/Strata/   (ojo: la S es MAYUSCULA)" -ForegroundColor Green
+Write-Host ""
+Write-Host "Si ves el README/documentacion en vez del globo, Pages esta en modo" -ForegroundColor Yellow
+Write-Host "'rama' (Jekyll). Cambialo UNA vez: Settings -> Pages -> Build and" -ForegroundColor Yellow
+Write-Host "deployment -> Source: 'GitHub Actions'. Luego vuelve a: npm run deploy" -ForegroundColor Yellow
