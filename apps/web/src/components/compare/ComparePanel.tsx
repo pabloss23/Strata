@@ -1,7 +1,8 @@
 // Comparar 2–4 países: tabla lado a lado por indicador, con el mejor valor de cada
 // fila resaltado en oro. Se añaden países pulsándolos en el globo o desde el buscador
 // interno. Dinámico, claro y útil. Ver brief de diseño.
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useDataset } from "@/data/useDataset";
 import { useStore } from "@/store/useStore";
 import { DIMENSIONS, DIMENSION_COLORS } from "@/lib/theme";
@@ -18,7 +19,40 @@ function AddPicker() {
   const toggleCompare = useStore((s) => s.toggleCompare);
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
-  const ref = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const popRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ left: number; bottom: number } | null>(null);
+
+  // El popover se renderiza en un PORTAL con posición fija, calculada desde el botón.
+  // Así NO lo recorta el `overflow-auto` del panel (era el bug: tras añadir el primer
+  // país el desplegable quedaba oculto y "no funcionaba"). Se cierra al clicar fuera.
+  useEffect(() => {
+    if (!open) return;
+    const place = () => {
+      const r = btnRef.current?.getBoundingClientRect();
+      if (!r) return;
+      const width = 224;
+      const left = Math.min(Math.max(8, r.left + r.width / 2 - width / 2), window.innerWidth - width - 8);
+      setPos({ left, bottom: window.innerHeight - r.top + 8 });
+    };
+    place();
+    const onDown = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (btnRef.current?.contains(target) || popRef.current?.contains(target)) return;
+      setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
 
   const results = useMemo(() => {
     if (!ds) return [];
@@ -29,44 +63,55 @@ function AddPicker() {
   }, [ds, q, compareList]);
 
   return (
-    <div ref={ref} className="relative flex flex-col items-center justify-center p-2">
+    <div className="flex flex-col items-center justify-center p-2">
       <button
+        ref={btnRef}
         onClick={() => setOpen((o) => !o)}
-        className="grid h-9 w-9 place-items-center rounded-full border border-dashed border-grid text-ink-300 transition-colors hover:border-gold/50 hover:text-gold"
+        className={`grid h-9 w-9 place-items-center rounded-full border border-dashed transition-colors ${
+          open ? "border-gold/60 text-gold" : "border-grid text-ink-300 hover:border-gold/50 hover:text-gold"
+        }`}
         aria-label={t("add_country")}
+        aria-expanded={open}
       >
-        <Icon name="chevron" size={16} className="rotate-180" />
+        <Icon name="plus" size={16} />
       </button>
       <span className="mt-1 text-2xs text-ink-500">{t("add")}</span>
-      {open && (
-        <div className="glass absolute bottom-full z-10 mb-2 w-56 overflow-hidden rounded-card">
-          <input
-            autoFocus
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder={t("search_country")}
-            className="w-full border-b border-grid/70 bg-transparent px-3 py-2 text-sm text-ink-100 placeholder:text-ink-500 focus:outline-none"
-          />
-          <ul className="max-h-52 overflow-y-auto p-1">
-            {results.map((c) => (
-              <li key={c.iso3}>
-                <button
-                  onClick={() => {
-                    toggleCompare(c.iso3);
-                    setQ("");
-                    setOpen(false);
-                  }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-ink-100/[0.05]"
-                >
-                  {c.flag && <img src={c.flag} alt="" className="h-3.5 w-5 rounded-[2px] object-cover ring-1 ring-ink-100/10" />}
-                  <span className="truncate text-sm text-ink-100">{name(c)}</span>
-                </button>
-              </li>
-            ))}
-            {results.length === 0 && <li className="px-3 py-3 text-center text-2xs text-ink-500">{t("no_results")}</li>}
-          </ul>
-        </div>
-      )}
+      {open &&
+        pos &&
+        createPortal(
+          <div
+            ref={popRef}
+            style={{ position: "fixed", left: pos.left, bottom: pos.bottom, width: 224 }}
+            className="glass z-50 overflow-hidden rounded-card shadow-2xl"
+          >
+            <input
+              autoFocus
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={t("search_country")}
+              className="w-full border-b border-grid/70 bg-transparent px-3 py-2 text-sm text-ink-100 placeholder:text-ink-500 focus:outline-none"
+            />
+            <ul className="max-h-52 overflow-y-auto p-1">
+              {results.map((c) => (
+                <li key={c.iso3}>
+                  <button
+                    onClick={() => {
+                      toggleCompare(c.iso3);
+                      setQ("");
+                      setOpen(false);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-ink-100/[0.05]"
+                  >
+                    {c.flag && <img src={c.flag} alt="" className="h-3.5 w-5 rounded-[2px] object-cover ring-1 ring-ink-100/10" />}
+                    <span className="truncate text-sm text-ink-100">{name(c)}</span>
+                  </button>
+                </li>
+              ))}
+              {results.length === 0 && <li className="px-3 py-3 text-center text-2xs text-ink-500">{t("no_results")}</li>}
+            </ul>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

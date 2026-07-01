@@ -81,7 +81,7 @@ export default function GlobeView() {
     };
   }, [theme, borders]);
 
-  const nodataColor = isLight ? "#BFCDDE" : undefined; // gris claro en tema claro
+  const nodataColor = isLight ? "#8FA1B8" : undefined; // gris medio, distinguible del océano claro
   const capColorFn = useCallback(
     (f: any) => capColor(scoreOf(isoOf(f)), scale, nodataColor),
     [scoreOf, scale, nodataColor]

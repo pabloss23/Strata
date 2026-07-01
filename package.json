@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "npm --workspace apps/web run dev",
     "build": "npm --workspace apps/web run build",
-    "data": "python data/pipeline/build_dataset.py"
+    "data": "python data/pipeline/build_dataset.py",
+    "deploy": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/publish.ps1"
   }
 }

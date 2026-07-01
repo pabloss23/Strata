@@ -6,7 +6,7 @@ import { useDataset } from "@/data/useDataset";
 import { useStore } from "@/store/useStore";
 import { useI18n } from "@/lib/i18n";
 import { Icon } from "@/components/ui/Icon";
-import { CURIOSITIES, TAG_META } from "@/content/curiosities";
+import { CURIOSITIES, TAG_META, newsUrl } from "@/content/curiosities";
 
 export default function CuriositiesPanel() {
   const open = useStore((s) => s.curiositiesOpen);
@@ -78,10 +78,10 @@ export default function CuriositiesPanel() {
                   <span aria-hidden>·</span>
                   <span className="num">{c.year}</span>
                   <a
-                    href={c.url}
+                    href={newsUrl(c.query)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`${t("curiosities_source")}: ${c.source}`}
+                    aria-label={`${t("curiosities_source")}: ${c.title[lang]}`}
                     className="ml-auto flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium text-gold/80 transition-colors hover:bg-gold/10 hover:text-gold"
                   >
                     {t("curiosities_source")}

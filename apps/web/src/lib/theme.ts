@@ -13,7 +13,7 @@ export const COLORS = {
   ink300: "#94A3B8", // texto secundario
   ink500: "#64748B",
   grid: "#1E293B", // bordes / rejilla
-  nodata: "#1A2030", // gris oscuro para "sin datos"
+  nodata: "#3C475E", // gris azulado, VISIBLE sobre el océano (antes casi negro)
 } as const;
 
 // Marca: el oro es EL acento (no hay acento por dimensión; el mapa es oro).

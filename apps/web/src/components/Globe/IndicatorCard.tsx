@@ -15,7 +15,7 @@ export default function IndicatorCard() {
   const { t, metric, category } = useI18n();
   const theme = useStore((s) => s.theme);
   // Debe coincidir con el color "sin datos" del mapa (claro usa un gris claro).
-  const nodataSwatch = theme === "light" ? "#BFCDDE" : COLORS.nodata;
+  const nodataSwatch = theme === "light" ? "#8FA1B8" : COLORS.nodata;
   if (!def || !ds) return null;
 
   const [lo, hi] = bounds[def.id] ?? [0, 1];
