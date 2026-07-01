@@ -34,6 +34,17 @@ export default function App() {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  // Retira la pantalla de carga (definida en index.html) cuando el dataset está
+  // listo o falla: así el splash cubre tanto la descarga del bundle como la de datos.
+  useEffect(() => {
+    if (!ds && !error) return;
+    const el = document.getElementById("app-splash");
+    if (!el) return;
+    el.classList.add("splash-hide");
+    const id = window.setTimeout(() => el.remove(), 500);
+    return () => window.clearTimeout(id);
+  }, [ds, error]);
+
   return (
     <div
       className={`app-bg relative h-screen w-screen overflow-hidden text-ink-100 ${

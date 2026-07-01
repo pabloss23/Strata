@@ -25,9 +25,62 @@
         }
       })();
     </script>
+    <!-- Pantalla de carga: se muestra al instante (antes de React) y la app la
+         retira sola cuando los datos están listos. Estilos en línea para que
+         funcione aunque el CSS principal aún no haya cargado. -->
+    <style>
+      #app-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.45s ease;
+        font-family: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      #app-splash.splash-hide { opacity: 0; pointer-events: none; }
+      html[data-theme="dark"] #app-splash { background: #050814; color: #f8fafc; }
+      html[data-theme="light"] #app-splash { background: #eef2f8; color: #0b1220; }
+      .splash-inner { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+      .splash-globe { position: relative; width: 78px; height: 78px; display: grid; place-items: center; }
+      .splash-globe svg { width: 42px; height: 42px; color: #e5b85b; animation: splash-bob 2.4s ease-in-out infinite; }
+      .splash-ring {
+        position: absolute; inset: 0; border-radius: 50%;
+        background: conic-gradient(from 0deg, rgba(229, 184, 91, 0) 0%, rgba(229, 184, 91, 0.15) 55%, #e5b85b 100%);
+        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+        mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+        animation: splash-spin 1s linear infinite;
+      }
+      .splash-word { font-size: 27px; font-weight: 700; letter-spacing: -0.02em; }
+      .splash-tag { font-size: 12.5px; opacity: 0.62; letter-spacing: 0.01em; }
+      .splash-bar { margin-top: 4px; width: 150px; height: 3px; border-radius: 99px; overflow: hidden; background: rgba(229, 184, 91, 0.16); }
+      .splash-bar span { display: block; height: 100%; width: 40%; border-radius: 99px; background: #e5b85b; animation: splash-slide 1.15s ease-in-out infinite; }
+      @keyframes splash-spin { to { transform: rotate(360deg); } }
+      @keyframes splash-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+      @keyframes splash-slide { 0% { margin-left: -40%; } 100% { margin-left: 100%; } }
+      @media (prefers-reduced-motion: reduce) {
+        .splash-globe svg, .splash-ring, .splash-bar span { animation: none; }
+        .splash-bar span { width: 100%; }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <div id="app-splash" aria-hidden="true" role="status" aria-label="Cargando Strata">
+      <div class="splash-inner">
+        <div class="splash-globe">
+          <span class="splash-ring"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+          </svg>
+        </div>
+        <div class="splash-word">Strata</div>
+        <div class="splash-tag">Cada país, en capas</div>
+        <div class="splash-bar"><span></span></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
