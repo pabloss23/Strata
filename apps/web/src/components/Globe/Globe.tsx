@@ -38,33 +38,54 @@ export default function GlobeView() {
   const { ds, byIso3 } = useDataset();
   const { def, scale, scoreOf, rankOf } = useActiveColoring();
 
-  const selectCountry = useStore((s) => s.selectCountry);
   const setHovered = useStore((s) => s.setHovered);
   const selectedIso3 = useStore((s) => s.selectedIso3);
   const hoveredIso3 = useStore((s) => s.hoveredIso3);
   const highContrast = useStore((s) => s.highContrast);
   const reduceMotion = useStore((s) => s.reduceMotion);
-  const compareOpen = useStore((s) => s.compareOpen);
   const compareList = useStore((s) => s.compareList);
-  const toggleCompare = useStore((s) => s.toggleCompare);
+  const theme = useStore((s) => s.theme);
   const { t, name, metric, lang } = useI18n();
   const reduce = useReducedMotion() || reduceMotion;
+  const isLight = theme === "light";
 
   const isoOf = (f: BorderFeature) => f.properties.iso3 ?? "";
 
-  // Océano oscuro (material sólido, sin textura satélite).
+  // Océano como material sólido (sin textura satélite). En claro es un azul suave y
+  // luminoso —para que sobre fondo claro parezca un globo, no una bola negra—; en
+  // oscuro sigue siendo una joya profunda. El emisivo alto evita el hemisferio negro.
   const globeMaterial = useMemo(() => {
-    const m = new THREE.MeshPhongMaterial({
-      color: "#0A1326",
-      emissive: "#070D1C",
-      emissiveIntensity: 0.5,
-      shininess: 4,
-      specular: new THREE.Color("#16223D"),
+    const light = theme === "light";
+    return new THREE.MeshPhongMaterial({
+      color: light ? "#A8C1DE" : "#0A1326",
+      emissive: light ? "#7E9BC0" : "#070D1C",
+      emissiveIntensity: light ? 0.7 : 0.5,
+      shininess: light ? 18 : 4,
+      specular: new THREE.Color(light ? "#E9F1FA" : "#16223D"),
     });
-    return m;
-  }, []);
+  }, [theme]);
 
-  const capColorFn = useCallback((f: any) => capColor(scoreOf(isoOf(f)), scale), [scoreOf, scale]);
+  // Ilumina la esfera de forma pareja: en claro subimos el ambiente para que el lado
+  // en sombra no quede negro; en oscuro se mantiene el contraste de joya.
+  useEffect(() => {
+    const globe = globeRef.current;
+    const scene: THREE.Scene | undefined = globe?.scene?.();
+    if (!scene) return;
+    const prev = scene.getObjectByName("strata-ambient");
+    if (prev) scene.remove(prev);
+    const amb = new THREE.AmbientLight(0xffffff, theme === "light" ? 1.15 : 0.55);
+    amb.name = "strata-ambient";
+    scene.add(amb);
+    return () => {
+      scene.remove(amb);
+    };
+  }, [theme, borders]);
+
+  const nodataColor = isLight ? "#BFCDDE" : undefined; // gris claro en tema claro
+  const capColorFn = useCallback(
+    (f: any) => capColor(scoreOf(isoOf(f)), scale, nodataColor),
+    [scoreOf, scale, nodataColor]
+  );
 
   const altitudeFn = useCallback(
     (f: any) => {
@@ -79,18 +100,17 @@ export default function GlobeView() {
   const strokeFn = useCallback(
     (f: any) => {
       const iso = isoOf(f);
-      return iso === selectedIso3 || iso === hoveredIso3 || compareList.includes(iso)
-        ? GOLD
-        : "rgba(30,41,59,0.6)";
+      const active = iso === selectedIso3 || iso === hoveredIso3 || compareList.includes(iso);
+      if (active) return isLight ? "#B67A12" : GOLD; // oro más oscuro en claro (contraste)
+      return isLight ? "rgba(72,98,132,0.5)" : "rgba(30,41,59,0.6)";
     },
-    [selectedIso3, hoveredIso3, compareList]
+    [selectedIso3, hoveredIso3, compareList, isLight]
   );
 
-  const labelFn = useCallback(
-    (f: any) => {
-      const iso = isoOf(f);
+  const labelHtml = useCallback(
+    (iso: string) => {
       const c = byIso3.get(iso);
-      const cname = c ? name(c) : f.properties.name ?? iso ?? "—";
+      const cname = c ? name(c) : iso || "—";
       const raw = def ? c?.metrics[def.id] : undefined;
       const reading = def && raw?.value != null ? formatValue(raw.value, def) : t("no_data");
       const swatch = capColor(scoreOf(iso), scale);
@@ -138,8 +158,36 @@ export default function GlobeView() {
     if (ll) globeRef.current.pointOfView({ lat: ll[0], lng: ll[1], altitude: 1.9 }, reduce ? 0 : 900);
   }, [selectedIso3, byIso3, reduce]);
 
-  // Nueva referencia del array al cambiar el coloreado → globe.gl re-evalúa el color.
-  const polygons = useMemo(() => (borders ? [...borders] : []), [borders, def?.id, highContrast]);
+  // El array de polígonos se mantiene ESTABLE durante la interacción (no se
+  // reconstruye al pasar el ratón): eso evita que globe.gl rehaga todo en cada
+  // hover y mantiene la animación fluida (objetivo 120 fps). El resaltado de
+  // selección/hover llega por la IDENTIDAD de los accessors (altitudeFn/strokeFn),
+  // que cambian con selectedIso3/hoveredIso3/compareList y globe.gl re-aplica solos.
+  const polygons = useMemo(
+    () => (borders ? [...borders] : []),
+    [borders, def?.id, highContrast]
+  );
+
+  // Países SIN polígono en la malla (micro-Estados, islas pequeñas): se muestran
+  // como PUNTOS para que sean visibles y clicables (seleccionar/comparar).
+  const polyIso = useMemo(() => new Set((borders ?? []).map(isoOf).filter(Boolean)), [borders]);
+  const points = useMemo(() => {
+    if (!ds) return [] as { iso3: string; lat: number; lng: number }[];
+    return ds.countries
+      .filter((c) => c.latlng && !polyIso.has(c.iso3))
+      .map((c) => ({ iso3: c.iso3, lat: c.latlng![0], lng: c.latlng![1] }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ds, polyIso, def?.id, highContrast]);
+
+  const pointActive = (iso: string) => iso === selectedIso3 || iso === hoveredIso3 || compareList.includes(iso);
+  // Lee el estado MÁS reciente al hacer clic (evita cierres obsoletos del handler
+  // que reciba globe.gl): en modo comparar añade/quita; si no, selecciona.
+  const onPick = (iso: string) => {
+    if (!iso) return;
+    const st = useStore.getState();
+    if (st.compareOpen) st.toggleCompare(iso);
+    else st.selectCountry(iso === st.selectedIso3 ? null : iso);
+  };
 
   return (
     <div ref={wrapRef} className="absolute inset-0">
@@ -149,25 +197,32 @@ export default function GlobeView() {
           width={size.width}
           height={size.height}
           backgroundColor="rgba(0,0,0,0)"
+          rendererConfig={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
           globeMaterial={globeMaterial}
           showAtmosphere
-          atmosphereColor={GOLD}
-          atmosphereAltitude={0.1}
+          atmosphereColor={isLight ? "#9FC0E8" : GOLD}
+          atmosphereAltitude={isLight ? 0.16 : 0.12}
           animateIn={!reduce}
           polygonsData={polygons}
           polygonAltitude={altitudeFn}
           polygonCapColor={capColorFn}
-          polygonSideColor={() => "rgba(5,8,20,0.6)"}
+          polygonSideColor={() => (isLight ? "rgba(120,150,185,0.55)" : "rgba(5,8,20,0.6)")}
           polygonStrokeColor={strokeFn}
-          polygonLabel={labelFn}
+          polygonLabel={(f: any) => labelHtml(isoOf(f))}
           polygonsTransitionDuration={ds ? 380 : 0}
-          onPolygonClick={(f: any) => {
-            const iso = isoOf(f);
-            if (!iso) return;
-            if (compareOpen) toggleCompare(iso);
-            else selectCountry(iso === selectedIso3 ? null : iso);
-          }}
+          onPolygonClick={(f: any) => onPick(isoOf(f))}
           onPolygonHover={(f: any) => setHovered(f ? isoOf(f) || null : null)}
+          pointsData={points}
+          pointLat={(d: any) => d.lat}
+          pointLng={(d: any) => d.lng}
+          pointColor={(d: any) => (pointActive(d.iso3) ? (isLight ? "#B67A12" : GOLD) : capColor(scoreOf(d.iso3), scale, nodataColor))}
+          pointAltitude={(d: any) => (pointActive(d.iso3) ? 0.06 : 0.018)}
+          pointRadius={(d: any) => (pointActive(d.iso3) ? 0.65 : 0.4)}
+          pointResolution={6}
+          pointLabel={(d: any) => labelHtml(d.iso3)}
+          pointsTransitionDuration={0}
+          onPointClick={(d: any) => onPick(d.iso3)}
+          onPointHover={(d: any) => setHovered(d ? d.iso3 : null)}
         />
       )}
     </div>

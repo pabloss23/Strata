@@ -19,6 +19,21 @@ export function formatValue(value: number | null | undefined, def: MetricDef): s
   return num(value, 1);
 }
 
+/**
+ * Valor para los EXTREMOS de la leyenda: números limpios y redondos en vez de
+ * cifras crudas raras (p. ej. 288.001 $ → 288.000 $). USD grande se redondea a
+ * miles/cientos; el resto usa el formato normal.
+ */
+export function formatLegend(value: number | null | undefined, def: MetricDef): string {
+  if (value == null || Number.isNaN(value)) return "—";
+  if (def.unit === "USD") {
+    const abs = Math.abs(value);
+    const v = abs >= 100000 ? Math.round(value / 1000) * 1000 : abs >= 10000 ? Math.round(value / 100) * 100 : Math.round(value);
+    return `${nf(0, 0).format(v)} $`;
+  }
+  return formatValue(value, def);
+}
+
 /** Poblacion compacta: 48,8 M · 1,42 mil M. */
 export function formatPopulation(n: number | null | undefined): string {
   if (n == null) return "—";

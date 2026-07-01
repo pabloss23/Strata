@@ -36,7 +36,7 @@ export default function RankingsPanel() {
 
   return (
     <aside
-      className="glass panel-in fixed right-0 top-14 z-30 flex h-[calc(100%-3.5rem)] w-[400px] max-w-[94vw] flex-col rounded-l-card md:top-0 md:h-full"
+      className="glass panel-in fixed right-0 top-[120px] z-30 flex h-[calc(100%-120px)] w-[400px] max-w-[94vw] flex-col rounded-l-card md:top-0 md:h-full"
       aria-label="Rankings"
     >
       <header className="border-b border-grid/70 p-4">

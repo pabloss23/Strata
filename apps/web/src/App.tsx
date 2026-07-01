@@ -11,20 +11,19 @@ import CountrySearch from "@/components/search/CountrySearch";
 import AccessibilityPanel from "@/components/chrome/AccessibilityPanel";
 import RankingsPanel from "@/components/rankings/RankingsPanel";
 import ComparePanel from "@/components/compare/ComparePanel";
+import CuriositiesPanel from "@/components/curiosities/CuriositiesPanel";
 import { useCountries } from "@/data/useCountries";
 import { useStore } from "@/store/useStore";
 import { useI18n } from "@/lib/i18n";
-import { useIsFounders } from "@/features/founders/useFoundersRoute";
-import FoundersApp from "@/features/founders/FoundersApp";
 
 export default function App() {
   const { data: ds, isLoading, error, refetch } = useCountries();
   const reduceMotion = useStore((s) => s.reduceMotion);
   const compareOpen = useStore((s) => s.compareOpen);
   const rankingsOpen = useStore((s) => s.rankingsOpen);
+  const curiositiesOpen = useStore((s) => s.curiositiesOpen);
   const theme = useStore((s) => s.theme);
   const { t, lang } = useI18n();
-  const isFounders = useIsFounders();
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -34,9 +33,6 @@ export default function App() {
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
-
-  // Sección Founders: experiencia a pantalla completa y aislada (ruta /founders).
-  if (isFounders) return <FoundersApp />;
 
   return (
     <div
@@ -48,7 +44,7 @@ export default function App() {
       <MobileBar />
 
       {/* Globo (herramienta de navegación) */}
-      <main className="absolute inset-x-0 bottom-0 top-14 md:left-[248px] md:top-0">
+      <main className="absolute inset-x-0 bottom-0 top-[120px] md:left-[248px] md:top-0">
         {isLoading && (
           <div className="flex h-full flex-col items-center justify-center gap-4">
             <span
@@ -76,7 +72,7 @@ export default function App() {
       </main>
 
       {/* Tarjeta de indicador (abajo-izquierda, despejando la barra lateral) */}
-      {ds && !compareOpen && !rankingsOpen && (
+      {ds && !compareOpen && !rankingsOpen && !curiositiesOpen && (
         <div className="pointer-events-none absolute bottom-4 left-3 z-20 md:left-[264px]">
           <IndicatorCard />
         </div>
@@ -86,6 +82,7 @@ export default function App() {
       <EvolutionModal />
       <RankingsPanel />
       <ComparePanel />
+      <CuriositiesPanel />
       <CountrySearch />
       <AccessibilityPanel />
 

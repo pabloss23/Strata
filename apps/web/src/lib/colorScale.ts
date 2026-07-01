@@ -21,9 +21,10 @@ export function makeGoldScale(highContrast = false): ColorScale {
   return (score: number) => scale(score);
 }
 
-/** Color para una celda del mapa: score o null → color "sin datos". */
-export function capColor(score: number | null, scale: ColorScale): string {
-  return score == null || Number.isNaN(score) ? COLORS.nodata : scale(score);
+/** Color para una celda del mapa: score o null → color "sin datos".
+ *  `nodataColor` permite un gris más claro en el tema claro (evita parches negros). */
+export function capColor(score: number | null, scale: ColorScale, nodataColor: string = COLORS.nodata): string {
+  return score == null || Number.isNaN(score) ? nodataColor : scale(score);
 }
 
 /** Muestras [0..100] para pintar la barra de leyenda como gradiente CSS. */

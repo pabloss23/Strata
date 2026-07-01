@@ -4,14 +4,18 @@
 import { useActiveColoring, useDataset } from "@/data/useDataset";
 import { legendGradient } from "@/lib/colorScale";
 import { COLORS } from "@/lib/theme";
-import { formatValue } from "@/lib/format";
+import { formatLegend } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
+import { useStore } from "@/store/useStore";
 import { Icon } from "@/components/ui/Icon";
 
 export default function IndicatorCard() {
   const { def, dimension, scale, total } = useActiveColoring();
   const { ds, bounds } = useDataset();
   const { t, metric, category } = useI18n();
+  const theme = useStore((s) => s.theme);
+  // Debe coincidir con el color "sin datos" del mapa (claro usa un gris claro).
+  const nodataSwatch = theme === "light" ? "#BFCDDE" : COLORS.nodata;
   if (!def || !ds) return null;
 
   const [lo, hi] = bounds[def.id] ?? [0, 1];
@@ -46,8 +50,8 @@ export default function IndicatorCard() {
         <span className="text-gold">{t("high")}</span>
       </div>
       <div className="mt-1 flex justify-between num text-2xs text-ink-300">
-        <span>{formatValue(minVal, def)}</span>
-        <span className="text-gold">{formatValue(maxVal, def)}</span>
+        <span>{formatLegend(minVal, def)}</span>
+        <span className="text-gold">{formatLegend(maxVal, def)}</span>
       </div>
 
       {/* Metadatos + acciones */}
@@ -58,7 +62,7 @@ export default function IndicatorCard() {
         <span className="flex items-center gap-1 text-2xs text-ink-500" title={t("no_data_country")}>
           <span
             className="h-3 w-3.5 rounded-[3px] border border-grid"
-            style={{ background: COLORS.nodata }}
+            style={{ background: nodataSwatch }}
             aria-hidden
           />
           {t("no_data")}

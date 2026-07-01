@@ -1,6 +1,6 @@
 # Despliegue de Strata
 
-Todo gratuito. Tres cosas: subir a GitHub, mantener el servidor encendido y activar la IA gratuita.
+Todo gratuito. Dos cosas: subir a GitHub y mantener el servidor encendido.
 
 ## 1) Subir a GitHub
 
@@ -34,18 +34,6 @@ powershell -ExecutionPolicy Bypass -File scripts\install-server.ps1
 ```
 
 **Linux / VPS (producción):** usa `deploy/strata.service` (systemd). Instrucciones dentro del archivo.
-
-## 3) IA gratuita (briefings de Founders)
-
-La web funciona sin IA (briefing determinista). Para activar la IA gratuita:
-
-1. Consigue una clave gratis de Google Gemini: https://aistudio.google.com/apikey
-2. Despliega en un host con funciones serverless gratuitas (Vercel o Netlify) y añade la
-   variable de entorno `GEMINI_API_KEY` (y opcional `GEMINI_MODEL`).
-   - Vercel: importa el repo, root del proyecto, y en *Settings → Environment Variables*.
-   - La función está en `api/briefing.ts` (se despliega automáticamente).
-3. La clave vive SOLO en el servidor; el cliente llama a `/api/briefing`. Si falla, cae al
-   briefing determinista. Anti-alucinación: el modelo solo usa los datos que se le pasan.
 
 > Para servir el frontend en Vercel/Netlify, el directorio de build es `apps/web/dist`
 > (comando `npm --prefix apps/web run build`).

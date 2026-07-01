@@ -133,15 +133,9 @@ Mientras el pipeline no esté completo, el frontend usa
       `strata-theme`; script anti-FOUC en `index.html`. La identidad navy+oro se
       mantiene y el globo es joya oscura en ambos temas. En claro el oro de TEXTO se
       oscurece a `#C8901E` (AA); el relleno sigue `#E5B85B` (`--accent-fill`).
-- [x] La sección "Jugar" se RETIRÓ (sustituida por Strata Founders).
-- [x] **Strata Founders** (`/founders`, aislada en `apps/web/src/features/founders/`):
-      inteligencia de jurisdicciones LEGAL para emprendedores (fiscalidad + constitución
-      + cumplimiento + residencia + coste + estabilidad). Motor de emparejamiento (MVP)
-      con perfil del fundador → ranking + aportación por criterio + avisos CFC; ficha de
-      7 pilares con año/fuente/lastVerified + "verificar en fuente"; comparar; glosario
-      experto (Parte D). Dataset SEMILLA de 12 jurisdicciones (status "partial", pendiente
-      de doble verificación C9-BIS). Optimización legal, nunca evasión. Falta: IA anclada
-      (necesita backend), export, ampliar a 217 verificadas.
+- [x] Las secciones "Jugar" y "Strata Founders" se RETIRARON por completo (sin
+      restos): no hay `apps/web/src/features/`, ni ruta `/jugar` o `/founders`, ni
+      entradas de menú. La app es el globo de datos + comparar/rankings/ficha.
 - [x] PIB per cápita en escala **logarítmica** con extremos reales (mín/máx exactos
       en la leyenda). Ver `LOG_METRICS` en `lib/metrics.ts`.
 

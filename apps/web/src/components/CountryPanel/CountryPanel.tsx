@@ -41,7 +41,7 @@ export default function CountryPanel() {
 
   return (
     <aside
-      className="glass panel-in pointer-events-auto absolute right-3 top-[66px] z-20 flex max-h-[calc(100vh-82px)] w-[348px] max-w-[calc(100vw-1.5rem)] flex-col rounded-card md:right-4 md:top-4 md:max-h-[calc(100vh-2rem)]"
+      className="glass panel-in pointer-events-auto absolute right-3 top-[128px] z-20 flex max-h-[calc(100vh-140px)] w-[348px] max-w-[calc(100vw-1.5rem)] flex-col rounded-card md:right-4 md:top-4 md:max-h-[calc(100vh-2rem)]"
       aria-label={name(country)}
     >
       {/* Cabecera */}

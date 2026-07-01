@@ -46,6 +46,7 @@ interface AppState {
   accessOpen: boolean; // popover de accesibilidad
   rankingsOpen: boolean; // panel de rankings
   compareOpen: boolean; // panel de comparación
+  curiositiesOpen: boolean; // panel de curiosidades / avances positivos
   highContrast: boolean; // rampa de mayor contraste
   reduceMotion: boolean; // desactivar animaciones (además del SO)
   theme: Theme; // tema claro/oscuro
@@ -63,8 +64,10 @@ interface AppState {
   setAccessOpen: (open: boolean) => void;
   openRankings: () => void;
   openCompare: () => void;
+  openCuriosities: () => void;
   setRankingsOpen: (open: boolean) => void;
   setCompareOpen: (open: boolean) => void;
+  setCuriositiesOpen: (open: boolean) => void;
   toggleHighContrast: () => void;
   toggleReduceMotion: () => void;
   setTheme: (t: Theme) => void;
@@ -84,6 +87,7 @@ export const useStore = create<AppState>((set) => ({
   accessOpen: false,
   rankingsOpen: false,
   compareOpen: false,
+  curiositiesOpen: false,
   highContrast: false,
   reduceMotion: false,
   theme: initTheme(),
@@ -105,12 +109,16 @@ export const useStore = create<AppState>((set) => ({
   setWeights: (w) => set({ weights: w }),
   setSearchOpen: (open) => set({ searchOpen: open }),
   setAccessOpen: (open) => set({ accessOpen: open }),
-  // Vistas mutuamente excluyentes; al abrir una se cierra la otra y la ficha.
+  // Vistas mutuamente excluyentes; al abrir una se cierran las otras y la ficha.
   openRankings: () =>
-    set((s) => ({ rankingsOpen: !s.rankingsOpen, compareOpen: false, selectedIso3: null })),
-  openCompare: () => set((s) => ({ compareOpen: !s.compareOpen, rankingsOpen: false, selectedIso3: null })),
+    set((s) => ({ rankingsOpen: !s.rankingsOpen, compareOpen: false, curiositiesOpen: false, selectedIso3: null })),
+  openCompare: () =>
+    set((s) => ({ compareOpen: !s.compareOpen, rankingsOpen: false, curiositiesOpen: false, selectedIso3: null })),
+  openCuriosities: () =>
+    set((s) => ({ curiositiesOpen: !s.curiositiesOpen, compareOpen: false, rankingsOpen: false, selectedIso3: null })),
   setRankingsOpen: (open) => set({ rankingsOpen: open }),
   setCompareOpen: (open) => set({ compareOpen: open }),
+  setCuriositiesOpen: (open) => set({ curiositiesOpen: open }),
   toggleHighContrast: () => set((s) => ({ highContrast: !s.highContrast })),
   toggleReduceMotion: () => set((s) => ({ reduceMotion: !s.reduceMotion })),
   setTheme: (theme) => {

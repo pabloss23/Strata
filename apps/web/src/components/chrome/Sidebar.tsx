@@ -3,7 +3,6 @@
 import { useStore } from "@/store/useStore";
 import { useI18n, LANGS } from "@/lib/i18n";
 import { Icon } from "@/components/ui/Icon";
-import { navigate } from "@/features/founders/useFoundersRoute";
 import IndicatorSelect from "./IndicatorSelect";
 
 export default function Sidebar() {
@@ -11,8 +10,10 @@ export default function Sidebar() {
   const setAccessOpen = useStore((s) => s.setAccessOpen);
   const openCompare = useStore((s) => s.openCompare);
   const openRankings = useStore((s) => s.openRankings);
+  const openCuriosities = useStore((s) => s.openCuriosities);
   const compareOpen = useStore((s) => s.compareOpen);
   const rankingsOpen = useStore((s) => s.rankingsOpen);
+  const curiositiesOpen = useStore((s) => s.curiositiesOpen);
   const setLang = useStore((s) => s.setLang);
   const { t, lang } = useI18n();
 
@@ -47,17 +48,14 @@ export default function Sidebar() {
 
       {/* Navegación */}
       <nav className="mt-6 flex flex-col gap-0.5">
-        <button
-          onClick={() => navigate("/founders")}
-          className="mb-1 flex items-center gap-2.5 rounded-btn border border-gold/30 bg-gold/10 px-3 py-2 text-[15px] font-semibold text-gold transition-all duration-200 ease-smooth hover:bg-gold/15"
-        >
-          <Icon name="building" size={17} /> {t("founders")}
-        </button>
         <button onClick={openCompare} className={`nav-item ${compareOpen ? "nav-item-active" : ""}`}>
           <Icon name="compare" size={17} /> {t("compare")}
         </button>
         <button onClick={openRankings} className={`nav-item ${rankingsOpen ? "nav-item-active" : ""}`}>
           <Icon name="rankings" size={17} /> {t("rankings")}
+        </button>
+        <button onClick={openCuriosities} className={`nav-item ${curiositiesOpen ? "nav-item-active" : ""}`}>
+          <Icon name="sparkles" size={17} /> {t("curiosities")}
         </button>
         <button onClick={() => setAccessOpen(true)} className="nav-item">
           <Icon name="access" size={17} /> {t("settings")}
